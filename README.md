@@ -11,9 +11,19 @@ Requirements: Node.js 18 or newer and an OpenAI API key.
 3. Start the server: `npm start`
 4. Open <http://localhost:3000>.
 
-The backend serves the page and provides `POST /api/chat`; the frontend never receives the provider key. Set `OPENAI_MODEL` optionally to select a model available to your API account. `/health` is available for service health checks.
+The backend serves the page and provides `POST /api/chat`; the frontend never receives the provider key. Set `OPENAI_MODEL` optionally to select a model available to your API account. `/health` is a health-check endpoint.
 
 Run the automated backend checks with `npm test`.
+
+## Deploy to Vercel
+
+The root `index.html` is the static entry page. The `api/[...path].js` function routes `/api/*` requests through the same Express app used locally, including `POST /api/chat`.
+
+1. Import this repository into Vercel and deploy it.
+2. In the Vercel project settings, add `OPENAI_API_KEY` as an environment variable for the deployment environments you use. Optionally add `OPENAI_MODEL`.
+3. Redeploy after adding or changing environment variables, then open the deployment URL shown by Vercel.
+
+Do not commit a real API key. If the Vercel URL itself says the site cannot be reached, confirm that a deployment succeeded and that the configured domain is assigned to this Vercel project; repository code cannot repair an unassigned domain or DNS configuration.
 
 ## Deploy to Fly.io
 
@@ -26,7 +36,7 @@ The repository includes a Dockerfile and `fly.toml` for deploying the web app an
 5. Deploy: `fly deploy`.
 6. Open the deployed app: `fly open`; check health with `fly checks list` or visit `/health`.
 
-The app listens on port 8080 in Fly's container. The configured health check uses `/health`. The machines are configured to stop when idle and start on incoming requests; the first request after idle may take longer. Fly.io may charge for app resources and AI-provider usage; check current pricing and set provider spending limits before public use.
+The app listens on port 8080 in Fly's container. The configured health check uses `/health`. Machines are configured to stop when idle and start on incoming requests; the first request after idle may take longer.
 
 ## Configuration and security
 
@@ -37,4 +47,4 @@ The app listens on port 8080 in Fly's container. The configured health check use
 
 ## Other deployment options
 
-Deploy the Node.js app to any host that supports long-running Node servers. Configure `OPENAI_API_KEY` (and optionally `OPENAI_MODEL`) as the host's environment variables, then run `npm start`. Static-only hosting such as GitHub Pages cannot run this backend; deploy the backend separately and configure the frontend's `apiEndpoint` to its HTTPS URL. If the frontend and API use different origins, configure narrowly scoped CORS on the backend rather than allowing every origin.
+Deploy the Node.js app to any host that supports long-running Node servers. Configure `OPENAI_API_KEY` (and optionally `OPENAI_MODEL`) as the host's environment variables, then run `npm start`. Set the host's port as `PORT` if it does not provide one automatically.
