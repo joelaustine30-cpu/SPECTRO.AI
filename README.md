@@ -1,26 +1,65 @@
 # SPECTRO.AI
 
-STAR-X is a lightweight, static chat interface built with HTML, CSS, and vanilla JavaScript.
+STAR-X is a lightweight chat interface for a personal AI assistant.
 
 ## Run locally
 
-Open `index.html` in a browser, or serve this directory with any static web server. The page works in demo mode without dependencies: it displays your messages and returns a clearly labeled local demo response.
+1. Install dependencies:
 
-## Connect an AI service
+```bash
+npm install
+```
 
-The repository does not include an AI backend or API credentials. To enable generated answers, provide a server-side endpoint that accepts a JSON `POST` body of `{ "message": "..." }` and returns JSON of `{ "reply": "..." }`. The endpoint should handle authentication, provider API keys, rate limiting, and input validation on the server. **Do not place secret API keys in this repository or browser code.**
+2. Copy the environment example file and add your OpenAI key:
 
-Before `Script.js` loads, configure the endpoint in the page:
+```bash
+cp .env.example .env
+```
+
+Then edit `.env` and replace `your_api_key_here` with your actual OpenAI API key.
+
+3. Start the app:
+
+```bash
+npm start
+```
+
+4. Open:
+
+```text
+http://localhost:3000
+```
+
+The page will send messages to `/api/chat` and display the AI response.
+
+## Important
+
+- Keep API keys in the backend environment only.
+- Do not place secrets in browser code or commit your `.env` file.
+- The `.env` file is already ignored by Git via `.gitignore`.
+
+## Frontend behavior
+
+The page sets:
 
 ```html
 <script>
-  window.SPECTRO_CONFIG = { apiEndpoint: "/api/chat" };
+  window.SPECTRO_CONFIG = { apiEndpoint: '/api/chat' };
 </script>
-<script src="Script.js" defer></script>
 ```
 
-The frontend sends the user's message to that endpoint. If no endpoint is configured, it remains in demo mode. A configured endpoint must be reachable from the page and allow requests from its origin.
+That allows `Script.js` to talk to the backend endpoint from the same origin.
 
-## Deploy
+## Deploying
 
-The lowercase `index.html` is the entry point expected by static hosting providers such as GitHub Pages. `INDEX.HTML` is retained as a compatibility copy for existing links.
+If you deploy to a host, point the `apiEndpoint` to your deployed API route or use a serverless function that exposes the same JSON contract:
+
+```json
+{ "message": "hello" }
+```
+
+and responds with:
+
+```json
+{ "reply": "Hello!" }
+```
