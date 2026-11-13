@@ -1,84 +1,82 @@
-* {
-    box-sizing: border-box;
-}
+(() => {
+    const form = document.getElementById('chatForm');
+    const input = document.getElementById('userInput');
+    const sendButton = document.getElementById('sendButton');
+    const chat = document.getElementById('chat');
+    const status = document.getElementById('status');
 
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #0b1020;
-    color: white;
-    min-height: 100vh;
-}
+    // Configure a same-origin backend by defining window.SPECTRO_CONFIG.apiEndpoint
+    // before this file loads. Never put a private AI API key in browser code.
+    const apiEndpoint = window.SPECTRO_CONFIG?.apiEndpoint;
 
-.container {
-    width: 100%;
-    max-width: 700px;
-    margin: auto;
-    padding: 20px;
-}
+    function addMessage(role, text) {
+        const message = document.createElement('div');
+        const label = document.createElement('strong');
+        const body = document.createElement('p');
 
-.header {
-    text-align: center;
-    padding: 25px 10px;
-}
+        message.className = `message ${role}`;
+        label.textContent = role === 'user' ? 'You' : 'STAR-X';
+        body.textContent = text;
+        message.append(label, body);
+        chat.append(message);
+        chat.scrollTop = chat.scrollHeight;
+        return message;
+    }
 
-.logo {
-    font-size: 32px;
-    font-weight: bold;
-}
+    function demoReply(message) {
+        const normalized = message.trim().toLowerCase();
+        if (/^(hi|hello|hey)\b/.test(normalized)) {
+            return 'Hello! I can respond in demo mode, but I am not connected to a live AI model yet.';
+        }
+        if (normalized.includes('help')) {
+            return 'I’m ready to help. This demo currently confirms your messages locally. To get AI-generated answers, configure a secure backend endpoint as described in README.md.';
+        }
+        return `I received your message: “${message}”\n\nSTAR-X is currently in demo mode. Connect a backend AI endpoint to provide generated responses.`;
+    }
 
-.subtitle {
-    color: #aaa;
-    margin-top: 8px;
-}
+    async function getReply(message) {
+        if (!apiEndpoint) return demoReply(message);
 
-#chat {
-    min-height: 400px;
-    padding: 15px;
-    margin-bottom: 15px;
-    border-radius: 15px;
-    background: #151b2e;
-    overflow-y: auto;
-}
+        const response = await fetch(apiEndpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message })
+        });
+        if (!response.ok) {
+            throw new Error(`The assistant service returned HTTP ${response.status}.`);
+        }
 
-.message {
-    padding: 12px 15px;
-    margin: 10px 0;
-    border-radius: 12px;
-    line-height: 1.5;
-}
+        const data = await response.json();
+        if (typeof data.reply !== 'string' || !data.reply.trim()) {
+            throw new Error('The assistant service response must include a non-empty "reply" string.');
+        }
+        return data.reply;
+    }
 
-.user {
-    background: #263b73;
-    text-align: right;
-}
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const message = input.value.trim();
+        if (!message) return;
 
-.ai {
-    background: #20283d;
-}
+        addMessage('user', message);
+        input.value = '';
+        input.disabled = true;
+        sendButton.disabled = true;
+        status.textContent = apiEndpoint ? 'STAR-X is thinking…' : 'Demo mode — connect an AI service to enable generated responses.';
 
-.input-area {
-    display: flex;
-    gap: 10px;
-}
-
-#userInput {
-    flex: 1;
-    padding: 14px;
-    border: none;
-    border-radius: 10px;
-    outline: none;
-    font-size: 16px;
-}
-
-button {
-    padding: 14px 20px;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-button:hover {
-    opacity: 0.85;
-}
+        const pending = addMessage('ai', 'Thinking…');
+        try {
+            const reply = await getReply(message);
+            pending.querySelector('p').textContent = reply;
+            status.textContent = apiEndpoint ? 'Connected to the assistant service.' : 'Demo mode — connect an AI service to enable generated responses.';
+        } catch (error) {
+            pending.querySelector('p').textContent = 'Sorry, I could not get a response. Please try again.';
+            status.textContent = error instanceof Error ? error.message : 'The assistant service could not be reached.';
+        } finally {
+            input.disabled = false;
+            sendButton.disabled = false;
+            input.focus();
+            chat.scrollTop = chat.scrollHeight;
+        }
+    });
+})();

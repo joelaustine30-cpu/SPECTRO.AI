@@ -3,44 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <meta name="description" content="Chat with STAR-X, your personal AI assistant.">
     <title>STAR-X AI</title>
-
     <link rel="stylesheet" href="Style.css">
 </head>
-
 <body>
+    <main class="container">
+        <header class="header">
+            <div class="logo" aria-label="STAR-X">⭐ STAR-X</div>
+            <p class="subtitle">Your personal AI assistant</p>
+        </header>
 
-    <div class="container">
-
-        <div class="header">
-            <div class="logo">⭐ STAR-X</div>
-            <div class="subtitle">Your personal AI assistant</div>
-        </div>
-
-        <div id="chat">
-
+        <section id="chat" class="chat" aria-label="Conversation" aria-live="polite" aria-relevant="additions">
             <div class="message ai">
-                <strong>STAR-X:</strong><br>
-                Hello! I'm STAR-X. How can I help you today?
+                <strong>STAR-X</strong>
+                <p>Hello! I'm STAR-X. How can I help you today?</p>
             </div>
+        </section>
 
-        </div>
-
-        <div class="input-area">
-
+        <form class="input-area" id="chatForm">
+            <label class="visually-hidden" for="userInput">Message STAR-X</label>
             <input
                 type="text"
                 id="userInput"
+                name="message"
                 placeholder="Ask STAR-X anything..."
+                autocomplete="off"
+                required
             >
+            <button id="sendButton" type="submit">Send</button>
+        </form>
+        <p id="status" class="status" role="status">Demo mode — connect an AI service to enable generated responses.</p>
+    </main>
 
-            <button id="sendButton" type="button">Send</button>
-
-        </div>
-
-    </div>
-
-    <script src="script.js"></script>
+    <script src="Script.js" defer></script>
 </body>
 </html>
