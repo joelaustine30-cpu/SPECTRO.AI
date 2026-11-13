@@ -14,26 +14,15 @@
             <p class="subtitle">Your personal AI assistant</p>
         </header>
 
-        <section id="chat" class="chat" aria-label="Conversation" aria-live="polite" aria-relevant="additions">
-            <div class="message ai">
-                <strong>STAR-X</strong>
-                <p>Hello! I'm STAR-X. How can I help you today?</p>
-            </div>
-        </section>
+        <section id="chat" class="chat" aria-label="Conversation" aria-live="polite" aria-relevant="additions"></section>
 
         <form class="input-area" id="chatForm">
             <label class="visually-hidden" for="userInput">Message STAR-X</label>
-            <input
-                type="text"
-                id="userInput"
-                name="message"
-                placeholder="Ask STAR-X anything..."
-                autocomplete="off"
-                required
-            >
+            <input type="text" id="userInput" name="message" placeholder="Ask STAR-X anything..." autocomplete="off" maxlength="4000" required>
             <button id="sendButton" type="submit">Send</button>
+            <button id="clearButton" class="secondary-button" type="button">Clear</button>
         </form>
-        <p id="status" class="status" role="status">Demo mode — connect an AI service to enable generated responses.</p>
+        <p id="status" class="status" role="status">Ready.</p>
     </main>
 
     <script>

@@ -122,6 +122,11 @@ button:disabled {
     opacity: 0.65;
 }
 
+.secondary-button {
+    background: #303a54;
+    color: #f7f8fc;
+}
+
 .status {
     min-height: 1.25em;
     margin: 10px 2px 0;
@@ -141,7 +146,7 @@ button:disabled {
     border: 0;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 560px) {
     .container {
         width: min(100% - 20px, 760px);
         padding-top: 10px;
@@ -156,7 +161,16 @@ button:disabled {
         max-width: 92%;
     }
 
+    .input-area {
+        flex-wrap: wrap;
+    }
+
+    #userInput {
+        flex-basis: 100%;
+    }
+
     button {
+        flex: 1;
         padding: 12px 15px;
     }
 }
